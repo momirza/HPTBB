@@ -1,6 +1,7 @@
 #include "fft.hpp"
 #include <vector>
 #include <stdio.h>
+#include "mat_t.hpp"
 
 int main(int argc, char *argv[])
 {

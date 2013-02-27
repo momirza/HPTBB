@@ -7,7 +7,9 @@
 
 using namespace tbb;
 
-#define CutOff 10
+#define CutOff 25
+
+
 
 long SerialFib( long n ) {
  if( n<2 )
@@ -52,6 +54,8 @@ long ParallelFib( long n ) {
 
 
 int main(int argc, char *argv[]){
+
+  tbb::task_scheduler_init init;
 
   int n=8;
   if(argc>1)
