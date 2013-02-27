@@ -32,10 +32,8 @@ task* execute() { // Overrides virtual function task::execute
 	} 
 	else {
 		local_mat_t right(dst.rows, dst.cols);
-		set_ref_count(5);
 
-#if 0
-		set_ref_count(5);
+		set_ref_count(9);
 
 		for(int i = 0; i < 4; ++i)
 		{
@@ -43,22 +41,6 @@ task* execute() { // Overrides virtual function task::execute
 			task::spawn(*tsk);
 		}
 
-		wait_for_all();
-#endif
-
-
-		MatTask(dst.quad(0,0), a.quad(0,0), b.quad(0,0));
-		MatTask(dst.quad(0,1), a.quad(0,0), b.quad(0,1));
-		MatTask(dst.quad(1,0), a.quad(1,0), b.quad(0,0));
-		MatTask(dst.quad(1,1), a.quad(1,0), b.quad(0,1));
-
-
-#if 0
-		mat_mat_mul(right.quad(0,0), a.quad(0,1), b.quad(1,0));
-		mat_mat_mul(right.quad(0,1), a.quad(0,1), b.quad(1,1));
-		mat_mat_mul(right.quad(1,0), a.quad(1,1), b.quad(1,0));
-		mat_mat_mul(right.quad(1,1), a.quad(1,1), b.quad(1,1));
-#endif
 
 		for(int i = 0; i < 4; ++i)
 		{
@@ -68,16 +50,30 @@ task* execute() { // Overrides virtual function task::execute
 
 		wait_for_all();
 
+#if 0
+		MatTask(dst.quad(0,0), a.quad(0,0), b.quad(0,0));
+		MatTask(dst.quad(0,1), a.quad(0,0), b.quad(0,1));
+		MatTask(dst.quad(1,0), a.quad(1,0), b.quad(0,0));
+		MatTask(dst.quad(1,1), a.quad(1,0), b.quad(0,1));
+
+
+		mat_mat_mul(right.quad(0,0), a.quad(0,1), b.quad(1,0));
+		mat_mat_mul(right.quad(0,1), a.quad(0,1), b.quad(1,1));
+		mat_mat_mul(right.quad(1,0), a.quad(1,1), b.quad(1,0));
+		mat_mat_mul(right.quad(1,1), a.quad(1,1), b.quad(1,1));
+#endif
+
+		// add dst and right
 		for(unsigned row=0;row<dst.rows;row++){
 			for(unsigned col=0;col<dst.cols;col++){
 				dst.at(row,col) += right.at(row,col);
 			}
 		}
 
-		if (dst.rows == 3 && dst.cols == 3){
-			std::cout<<"parallel"<<std::endl;
-			right.dump(std::cout);
-		}
+		// if (dst.rows == 3 && dst.cols == 3){
+		// 	std::cout<<"parallel"<<std::endl;
+		// 	right.dump(std::cout);
+		// }
 
 		}
 	return NULL;

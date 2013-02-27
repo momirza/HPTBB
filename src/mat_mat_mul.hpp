@@ -17,8 +17,8 @@ void mat_mat_mul(
 					acc += a.at(row,i) * b.at(i,col);
 				}
 				dst.at(row,col) = acc;
-				if(acc >= 0.1861 && acc <= 0.1862)
-					std::cout << "BLARGH" << std::endl;
+				// if(acc >= 0.1861 && acc <= 0.1862)
+				// 	std::cout << "BLARGH" << std::endl;
 			}
 		}
 	}else{
@@ -40,10 +40,10 @@ void mat_mat_mul(
 			}
 		}
 
-		if (dst.rows == 3 && dst.cols == 3){
-			std::cout<<"serial"<<std::endl;
-			right.dump(std::cout);
-		}
+		// if (dst.rows == 3 && dst.cols == 3){
+		// 	std::cout<<"serial"<<std::endl;
+		// 	right.dump(std::cout);
+		// }
 	}
 }
 
