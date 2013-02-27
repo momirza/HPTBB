@@ -69,7 +69,5 @@ int main(int argc, char *argv[]){
            << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << std::endl
            << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_t1 - parallel_t0).seconds() << std::endl;
   
-
-  
   std::cout << sum1 << std::endl << sum2 << std::endl;
 }
