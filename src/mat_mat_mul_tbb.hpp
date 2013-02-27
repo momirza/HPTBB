@@ -11,7 +11,9 @@
 #include <assert.h>
 #include <tbb/task_group.h>
 
+
 using namespace tbb;		
+int TOTAL=4;
 
 class Acc {
 	mat_t _dst;
@@ -56,8 +58,9 @@ class MatTask{
 
                 for(int i = 0; i < 4; i++)
                 {
-                    if(1)
+                    if (TOTAL>0)
                     {
+                    --TOTAL;
                     group.run(MatTask(dst.quad(i/2,i%2), a.quad(i/2,0), b.quad(0,i%2)));
                     group.run(MatTask(right.quad(i/2, i%2), a.quad(i/2, 1), b.quad(1, i%2)));
                     }
@@ -69,18 +72,14 @@ class MatTask{
                 }
                 group.wait(); 
 
-            // paralllel add dst and right
-            //printf("accumulator time!\n");
             parallel_for(blocked_range<unsigned>(0, dst.rows), Acc(dst, right), auto_partitioner());
-            //printf("end accumulator time!\n");
             }
     }
 };
 
 void mat_mat_mul_parallel(mat_t dst, const mat_t a, const mat_t b){
-    tbb::task_scheduler_init init;
+    tbb::task_scheduler_init init(tbb::task_scheduler_init::automatic);
     MatTask(dst, a, b)();
-    //task::spawn_root_and_wait(*tsk);
 }
 
 #endif
