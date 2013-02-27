@@ -1,4 +1,4 @@
-ifndef mat_mat_mul_hpp_tbb
+#ifndef mat_mat_mul_hpp_tbb
 #define mat_mat_mul_hpp_tbb
 
 
