@@ -50,18 +50,7 @@ task* execute() { // Overrides virtual function task::execute
 
 		wait_for_all();
 
-#if 0
-		MatTask(dst.quad(0,0), a.quad(0,0), b.quad(0,0));
-		MatTask(dst.quad(0,1), a.quad(0,0), b.quad(0,1));
-		MatTask(dst.quad(1,0), a.quad(1,0), b.quad(0,0));
-		MatTask(dst.quad(1,1), a.quad(1,0), b.quad(0,1));
-
-
-		mat_mat_mul(right.quad(0,0), a.quad(0,1), b.quad(1,0));
-		mat_mat_mul(right.quad(0,1), a.quad(0,1), b.quad(1,1));
-		mat_mat_mul(right.quad(1,0), a.quad(1,1), b.quad(1,0));
-		mat_mat_mul(right.quad(1,1), a.quad(1,1), b.quad(1,1));
-#endif
+		
 
 		// add dst and right
 		for(unsigned row=0;row<dst.rows;row++){
@@ -69,11 +58,6 @@ task* execute() { // Overrides virtual function task::execute
 				dst.at(row,col) += right.at(row,col);
 			}
 		}
-
-		// if (dst.rows == 3 && dst.cols == 3){
-		// 	std::cout<<"parallel"<<std::endl;
-		// 	right.dump(std::cout);
-		// }
 
 		}
 	return NULL;
