@@ -88,7 +88,7 @@ public:
         {
             for(unsigned r=0;r<rows;r++){
                 for(unsigned c=0;c<cols;c++){
-                    if(abs(at(r,c) - rhs.at(r,c)) > 0.001)
+                    if(fabs(at(r,c) - rhs.at(r,c)) > 0.001)
                         return false;
                 }
             }
