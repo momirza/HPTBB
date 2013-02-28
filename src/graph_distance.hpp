@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <limits.h>
 
+#include <cmath>
+
 struct node
 {
 	int id;
