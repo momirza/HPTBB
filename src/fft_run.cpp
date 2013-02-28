@@ -32,19 +32,18 @@ int main(int argc, char *argv[])
 	int log2n2=atoi(argv[1]);
 	int n2=1<<log2n2;
 	
-	std::vector<std::complex<double> > in2(n2, 0.0), out2(n2);
-	for(int j=0;j<n2;j++){
-		in2[j]=std::complex<double>(rand()/(double)(RAND_MAX) - 0.5, rand()/(double)(RAND_MAX) - 0.5);
-	}
+	std::vector<std::complex<double> >  out2(n2);
+
 	
 	
 	tbb::tick_count parallel_t0 = tbb::tick_count::now();
-	fft_tbb(n2, &in2[0], &out2[0]);
+	fft_tbb(n2, &in[0], &out2[0]);
 	tbb::tick_count parallel_t1 = tbb::tick_count::now();
 	
 	for(int j=0;j<n2;j++){
-		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in2[j]), imag(in2[j]), real(out2[j]), imag(out2[j]));
+		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out2[j]), imag(out2[j]));
 	}
+	if(out2 == out) std::cout << "----- success ------" << std::endl;
 	
 	std::cout << "Serial version ran in " << (serial_t1 - serial_t0).seconds() << " seconds" << std::endl
            << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << std::endl
