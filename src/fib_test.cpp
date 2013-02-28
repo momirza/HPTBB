@@ -9,8 +9,6 @@ using namespace tbb;
 
 #define CutOff 25
 
-
-
 long SerialFib( long n ) {
  if( n<2 )
   return n;
