@@ -83,7 +83,23 @@ public:
 	}
 
 	bool operator == (const mat_t &rhs) 
-	{ return rows == rhs.rows && cols == rhs.cols && stride == rhs.stride && !memcmp(mat, rhs.mat, rows * cols * sizeof(*mat)); }
+	{
+        if(rows == rhs.rows && cols == rhs.cols && stride == rhs.stride)
+        {
+            for(unsigned r=0;r<rows;r++){
+                for(unsigned c=0;c<cols;c++){
+                    if(std::abs(at(r,c) - rhs.at(r,c)) > 0.001)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 };
 
 /*! This is a matrix which allocates storage as well (not just a view) */
