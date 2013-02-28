@@ -1,6 +1,8 @@
 #include "fft.hpp"
+#include "fft_tbb.hpp"
 #include <vector>
 #include <stdio.h>
+#include "tbb/tick_count.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,11 +21,34 @@ int main(int argc, char *argv[])
 		in[j]=std::complex<double>(rand()/(double)(RAND_MAX) - 0.5, rand()/(double)(RAND_MAX) - 0.5);
 	}
 	
+	tbb::tick_count serial_t0 = tbb::tick_count::now();
 	fft(n, &in[0], &out[0]);
-	
+	tbb::tick_count serial_t1 = tbb::tick_count::now();
+
 	for(int j=0;j<n;j++){
 		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out[j]), imag(out[j]));
 	}
+
+	int log2n2=atoi(argv[1]);
+	int n2=1<<log2n2;
+	
+	std::vector<std::complex<double> > in2(n2, 0.0), out2(n2);
+	for(int j=0;j<n2;j++){
+		in2[j]=std::complex<double>(rand()/(double)(RAND_MAX) - 0.5, rand()/(double)(RAND_MAX) - 0.5);
+	}
+	
+	
+	tbb::tick_count parallel_t0 = tbb::tick_count::now();
+	fft_tbb(n2, &in2[0], &out2[0]);
+	tbb::tick_count parallel_t1 = tbb::tick_count::now();
+	
+	for(int j=0;j<n2;j++){
+		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in2[j]), imag(in2[j]), real(out2[j]), imag(out2[j]));
+	}
+	
+	std::cout << "Serial version ran in " << (serial_t1 - serial_t0).seconds() << " seconds" << std::endl
+           << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << std::endl
+           << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_t1 - parallel_t0).seconds() << std::endl;
 	
 	/* To test this, you can try loading the output into matlab. Load
 		the output as a four column matrix x. Then the input is:
