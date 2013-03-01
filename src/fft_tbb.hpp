@@ -8,6 +8,9 @@
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range2d.h"
 #include <tbb/task.h>
+#include <tbb/mutex.h>
+#include <assert.h>
+#include "tbb/task_group.h"
 
 using namespace tbb;
 
@@ -25,7 +28,7 @@ int Log2( int n )
 */
 
 
-class fft_par: public task {
+class fftTask{
 public:
 	int n;
 	std::complex<double> wn;
@@ -34,14 +37,18 @@ public:
 	std::complex<double> *pOut;
 	int sOut;
 
-	// init
-	fft_par(int m_, std::complex<double> wn_, const std::complex<double> *pIn_, int sIn_, std::complex<double> *pOut_, int sOut_) :
-			n(m_), wn(wn_), pIn(pIn_), sIn(sIn_), pOut(pOut_), sOut(sOut_) {}
 
-task* execute() { // Overrides virtual function task::execute
-	if((Log2(n) % 2) == 0){
-	// if(n<1024){
+	// init
+	fftTask(int m_, std::complex<double> wn_, const std::complex<double> *pIn_, int sIn_, std::complex<double> *pOut_, int sOut_) :
+			n(m_), wn(wn_), pIn(pIn_), sIn(sIn_), pOut(pOut_), sOut(sOut_) 
+			{
+			}
+
+void operator()() { // Overrides virtual function task::execute
+	// if((Log2(n) % 2) == 0){
+	if(n<0){
 		fft_impl(n, wn, pIn, 1, pOut, 1);
+		assert(0);
 	} 
 	else {
 		if (n == 1){
@@ -53,12 +60,10 @@ task* execute() { // Overrides virtual function task::execute
 
 			unsigned m = n/2;
 
-			set_ref_count(3);
-			fft_par *tsk = new( allocate_child() ) fft_par(m,wn*wn,pIn,2*sIn,pOut,sOut);
-			task::spawn(*tsk);
-			fft_par *tsk2 = new( allocate_child() ) fft_par(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
-			task::spawn(*tsk2);
-			wait_for_all();
+			task_group g;
+			g.run(fftTask(m,wn*wn,pIn,2*sIn,pOut,sOut));
+			g.run(fftTask(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut));
+			g.wait();
 			 
 			std::complex<double> w=std::complex<double>(1.0, 0.0);
 
@@ -71,7 +76,6 @@ task* execute() { // Overrides virtual function task::execute
 			}
 		}
 		}
-	return NULL;
 	}
 };
 #if 0
@@ -111,8 +115,9 @@ void fft_tbb(int n, const std::complex<double> *pIn, std::complex<double> *pOut)
 	double angle = pi2/n;
 	std::complex<double> wn(cos(angle), sin(angle));
 	// fft_impl(n, wn, pIn, 1, pOut, 1);
-	fft_par* tsk = new(task::allocate_root()) fft_par(n, wn, pIn, 1, pOut, 1);
-	task::spawn_root_and_wait(*tsk);
+	//fftTask* tsk = new(task::allocate_root()) fftTask(n, wn, pIn, 1, pOut, 1);
+	//task::spawn_root_and_wait(*tsk);
+	fftTask(n, wn, pIn, 1, pOut, 1)();
 }
 
 #endif
