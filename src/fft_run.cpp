@@ -40,9 +40,10 @@ int main(int argc, char *argv[])
 	fft_tbb(n2, &in[0], &out2[0]);
 	tbb::tick_count parallel_t1 = tbb::tick_count::now();
 	
-	for(int j=0;j<n2;j++){
-		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out2[j]), imag(out2[j]));
-	}
+	// for(int j=0;j<n2;j++){
+	// 	fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out2[j]), imag(out2[j]));
+	// }
+	
 	if(out2 == out) std::cout << "----- success ------" << std::endl;
 	
 	std::cout << "Serial version ran in " << (serial_t1 - serial_t0).seconds() << " seconds" << std::endl
