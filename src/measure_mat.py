@@ -9,7 +9,7 @@ import sys
 
 squares = [2**n for n in xrange(11)]
 
-RUNS = 30
+RUNS = 7
 
 def call_executable(square):
     proc_list = []
