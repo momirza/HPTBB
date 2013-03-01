@@ -1,5 +1,5 @@
-#ifndef fft_tbb_hpp
-#define fft_tbb_hpp
+#ifndef fft_tbb_hpp_seq
+#define fft_tbb_hpp_seq
 
 #include <complex>
 #include <math.h>
@@ -22,21 +22,11 @@ using namespace tbb;
 */
 
 
-class fftTask{
-public:
-	int n;
-	std::complex<double> wn;
-	const std::complex<double> *pIn;
-	int sIn;
-	std::complex<double> *pOut;
-	int sOut;
-
-	// init
-	fftTask(int m_, std::complex<double> wn_, const std::complex<double> *pIn_, int sIn_, std::complex<double> *pOut_, int sOut_) :
-			n(m_), wn(wn_), pIn(pIn_), sIn(sIn_), pOut(pOut_), sOut(sOut_) 
-			{}
-
-void operator()() { // Overrides virtual function task::execute
+void fft_elision(
+	int n, std::complex<double> wn,
+	const std::complex<double> *pIn, int sIn,
+	std::complex<double> *pOut, int sOut
+) {
 	if (n == 1){
 		pOut[0] = pIn[0];
     }else if (n == 2){
@@ -60,17 +50,20 @@ void operator()() { // Overrides virtual function task::execute
 		  w = w*wn;
 		}
 	}
-	}
 };
 
 	
-void fft_tbb(int n, const std::complex<double> *pIn, std::complex<double> *pOut)
+void fft_seq(int n, const std::complex<double> *pIn, std::complex<double> *pOut)
 {
 	const double pi2=6.283185307179586476925286766559;
 	double angle = pi2/n;
 	std::complex<double> wn(cos(angle), sin(angle));
-	tbb::task_scheduler_init init(tbb::task_scheduler_init::automatic);
-	fftTask(n, wn, pIn, 1, pOut, 1)();
+	if (n < 262144) {
+		fft_impl(n, wn, pIn, 1, pOut, 1);
+	}
+	else { 
+		fft_elision(n, wn, pIn, 1, pOut, 1);
+	}
 }
 
 #endif

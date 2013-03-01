@@ -1,7 +1,7 @@
 #include "mat_mat_mul.hpp"
 #include "mat_mat_mul_tbb.hpp"
 #include "mat_mat_mul_opt.hpp"
-#include "mat_mat_mul_ser.hpp"
+#include "mat_mat_mul_seq.hpp"
 #include "tbb/tick_count.h"
 
 int main(int argc, char *argv[])
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	
 
 	tick_count serial_elision_t0 = tick_count::now();
-	mat_mat_mul_ser(R4, A, B);
+	mat_mat_mul_seq(R4, A, B);
 	tick_count serial_elision_t1 = tick_count::now();
 	// std::cout << "=====Done with elision Version=====" << std::endl;
 	
@@ -52,6 +52,6 @@ int main(int argc, char *argv[])
  //           << "Parallel version ran in " <<  (parallel_t1 - parallel_t0).seconds() << " seconds" << std::endl
  //           << "Resulting in a speedup of " << (serial_t1 - serial_t0).seconds() / (parallel_t1 - parallel_t0).seconds() << std::endl;
 	
-	std::cout << (serial_t1 - serial_t0).seconds() << " " << (tbb_t1 - tbb_t0).seconds() << " " << (opt_t1 - opt_t0).seconds() << " " << (opt_t1 - tbb_t0).seconds() << std::endl;
+	std::cout << (serial_t1 - serial_t0).seconds() << " " << (tbb_t1 - tbb_t0).seconds() << " " << (opt_t1 - opt_t0).seconds() << " " << (serial_elision_t1 - serial_elision_t0).seconds() << std::endl;
 	return 0;
 }
