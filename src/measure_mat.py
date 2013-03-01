@@ -39,15 +39,20 @@ if __name__ == "__main__":
         times = map(call_executable, squares)
         ser, tbb, opt, eli = zip(*times)
         dump_csvs(times)
+    
+    
+    tck_ser = interpolate.splrep(squares,ser,s=0)
+    tck_tbb = interpolate.splrep(squares,tbb,s=0)
+    tck_opt = interpolate.splrep(squares,opt,s=0)
+    tck_eli = interpolate.splrep(squares,eli,s=0)
+    squaresnew = np.arange(1, max(squares) + 1, 10)
+    ser_i = interpolate.splev(squaresnew,tck_ser ,der=0)
+    tbb_i = interpolate.splev(squaresnew,tck_tbb ,der=0)
+    opt_i = interpolate.splev(squaresnew,tck_opt ,der=0)
+    eli_i = interpolate.splev(squaresnew,tck_eli ,der=0)
 
-    ser_i = interpolate.interp1d(squares, ser)
-    tbb_i = interpolate.interp1d(squares, tbb)
-    opt_i = interpolate.interp1d(squares, opt)
-    eli_i = interpolate.interp1d(squares, eli)
-    squaresnew = np.arange(1, max(squares) + 1, 1)
 
-
-    pyplot.plot(squaresnew, ser_i(squaresnew),'-r', squaresnew, tbb_i(squaresnew),'-b', squaresnew, opt_i(squaresnew),'-k', squaresnew, eli_i(squaresnew),'-g', lw= 1.5)
+    pyplot.plot(squaresnew, ser_i,'-r', squaresnew, tbb_i,'-b', squaresnew, opt_i,'-k', squaresnew, eli_i,'-g', lw= 1.5)
     pyplot.plot(squares , ser, 'ro', squares, tbb, 'bo', squares, opt, 'ko', squares, eli, 'go')
     pyplot.grid(which='major', axis='both', linestyle='-',color='#C0C0C0', alpha=0.5)
     pyplot.grid(which='minor', axis='y', linestyle='--',color='#C0C0C0', alpha=0.5)
