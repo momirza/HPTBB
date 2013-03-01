@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
 	fft(n, &in[0], &out[0]);
 	tbb::tick_count serial_t1 = tbb::tick_count::now();
 
-	for(int j=0;j<n;j++){
-		fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out[j]), imag(out[j]));
-	}
+	// for(int j=0;j<n;j++){
+	// 	fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out[j]), imag(out[j]));
+	// }
 
 	int log2n2=atoi(argv[1]);
 	int n2=1<<log2n2;
