@@ -2,6 +2,7 @@
 #define fft_tbb_hpp
 
 #include <complex>
+#include <math.h>
 #include "mat_t.hpp"
 #include "tbb/task_scheduler_init.h"
 #include "tbb/parallel_for.h"
@@ -9,7 +10,13 @@
 #include <tbb/task.h>
 
 using namespace tbb;
-#define CUTOFF 64
+
+int Log2( int n )  
+{  
+    // log(n)/log(2) is log2.  
+    return log( n ) / log( 2 );  
+}
+
 /* Does a recursive FFT
 	n = Number of elements (must be a power of two)
 	wn =  Complex root of unity of order n
@@ -32,29 +39,37 @@ public:
 			n(m_), wn(wn_), pIn(pIn_), sIn(sIn_), pOut(pOut_), sOut(sOut_) {}
 
 task* execute() { // Overrides virtual function task::execute
-	if(n<CUTOFF){
+	if((Log2(n) % 2) == 0){
+	// if(n<1024){
 		fft_impl(n, wn, pIn, 1, pOut, 1);
 	} 
 	else {
-		unsigned m = n/2;
+		if (n == 1){
+			pOut[0] = pIn[0];
+	    }else if (n == 2){
+			pOut[0] = pIn[0]+pIn[sIn];
+			pOut[sOut] = pIn[0]-pIn[sIn];
+	    }else{
 
-		set_ref_count(3);
-		fft_par *tsk = new( allocate_child() ) fft_par(m,wn*wn,pIn,2*sIn,pOut,sOut);
-		task::spawn(*tsk);
-		fft_par *tsk2 = new( allocate_child() ) fft_par(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
-		task::spawn(*tsk2);
-		wait_for_all();
-		 
-		std::complex<double> w=std::complex<double>(1.0, 0.0);
+			unsigned m = n/2;
 
-		for (unsigned j=0;j<m;j++){
-		  std::complex<double> t1 = w*pOut[m+j];
-		  std::complex<double> t2 = pOut[j]-t1;
-		  pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
-		  pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
-		  w = w*wn;
+			set_ref_count(3);
+			fft_par *tsk = new( allocate_child() ) fft_par(m,wn*wn,pIn,2*sIn,pOut,sOut);
+			task::spawn(*tsk);
+			fft_par *tsk2 = new( allocate_child() ) fft_par(m,wn*wn,pIn+sIn,2*sIn,pOut+sOut*m,sOut);
+			task::spawn(*tsk2);
+			wait_for_all();
+			 
+			std::complex<double> w=std::complex<double>(1.0, 0.0);
+
+			for (unsigned j=0;j<m;j++){
+			  std::complex<double> t1 = w*pOut[m+j];
+			  std::complex<double> t2 = pOut[j]-t1;
+			  pOut[j] = pOut[j]+t1;                 /*  pOut[j] = pOut[j] + w^i pOut[m+j] */
+			  pOut[j+m] = t2;                          /*  pOut[j] = pOut[j] - w^i pOut[m+j] */
+			  w = w*wn;
+			}
 		}
-
 		}
 	return NULL;
 	}

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 	
 	int log2n=atoi(argv[1]);
 	int n=1<<log2n;
-	
+	std::cout << n << std::endl;
 	std::vector<std::complex<double> > in(n, 0.0), out(n);
 	for(int j=0;j<n;j++){
 		in[j]=std::complex<double>(rand()/(double)(RAND_MAX) - 0.5, rand()/(double)(RAND_MAX) - 0.5);
