@@ -98,7 +98,7 @@ std::vector<int> graph_distance_tbb(const std::vector<node> &nodes, int start)
 		if(distance[curr.first]==INT_MAX){
 			distance[curr.first]=curr.second;
 			// fials with paralllel for and speedup is worse
-			parallel_for(blocked_range<int>(0, nodes[curr.first].edges.size()), PushFor(&todo, nodes, &curr));
+			// parallel_for(blocked_range<int>(0, nodes[curr.first].edges.size()), PushFor(&todo, nodes, &curr));
 			// the following works but is also slow.
 			for(int i=0;i<nodes[curr.first].edges.size();i++){
 				todo.push(std::make_pair(nodes[curr.first].edges[i],curr.second+1));
