@@ -31,6 +31,6 @@ if __name__ == "__main__":
     pyplot.xlabel("n")
     pyplot.legend(('Serial','TBB', 'OPT', 'Elision'), loc=2)
     pyplot.ylabel("Time (s)")
-    pyplot.savefig('mat.png')
     pyplot.title("Execution Times for matrix-matrix multiplication (%d simulation runs) " % RUNS)
+    pyplot.savefig('mat.png')
     dump_csvs(times)
