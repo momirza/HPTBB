@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 	// for(int j=0;j<n2;j++){
 	// 	fprintf(stdout, "%.16lg, %.16lg, %.16lg, %.16lg\n", real(in[j]), imag(in[j]), real(out2[j]), imag(out2[j]));
 	// }
-	std::cout << out2[4] << endl;
-	std::cout << out[4] << endl;
+	std::cout << out2[4] << std::endl;
+	std::cout << out[4] << std::endl;
 	
 
 	if(out2 == out) std::cout << "----- success ------" << std::endl;
